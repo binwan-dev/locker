@@ -1,11 +1,11 @@
-#include <#WiFi.h>
+#include <ESP8266WiFi.h>
 
-char ssid[]="WA";
-char password[]="wivia1868";
-IPAddress staticIP(192.168.3.200);
-IPAddress gateway(192.168.3.1);
-IPAddress subnet(255.255.255.0);
-IPAddress server(192.168.3.173);
+char ssid[]="Bin";
+char password[]="wanbin1994";
+IPAddress staticIP(192,168,3,200);
+IPAddress gateway(192,168,3,1);
+IPAddress subnet(255,255,255,0);
+IPAddress server(192,168,3,105);
 int port=3233;
 WiFiClient client;
 
@@ -14,8 +14,9 @@ void setup()
 	Serial.begin(9600);
 
 	Serial.printf("Connecting to %s\n", ssid);
+  WiFi.mode(WIFI_STA);
 	WiFi.config(staticIP,gateway,subnet);
-	WiFi.setAutoReconnect(true);
+	//WiFi.setAutoReconnect(true);
 	WiFi.begin(ssid,password);
 	while(WiFi.status()!=WL_CONNECTED)
 	{
@@ -29,18 +30,21 @@ void setup()
 
 void loop()
 {
-	if(!client.available())
+	if(!client.connected())
 	{
 		connectServer();
 	}
 
-	char c=client.read();
-	Serial.print(c);
+  if(client.available())
+  {
+  	String line = client.readStringUntil('\n');
+    Serial.print(line);
+  }
 }
 
 void connectServer()
 {
-	while(!client.available())
+	while(!client.connected())
 	{
 		client.connect(server,port);
 		Serial.printf("Try connect server(%s:%d)...\n",server,port);
