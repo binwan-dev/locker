@@ -1,53 +1,50 @@
-#include <ESP8266WiFi.h>
+#include "Stepper.h"
+#include "ClientSocket.h"
 
-char ssid[]="Bin";
-char password[]="wanbin1994";
-IPAddress staticIP(192,168,3,200);
-IPAddress gateway(192,168,3,1);
-IPAddress subnet(255,255,255,0);
-IPAddress server(192,168,3,105);
-int port=3233;
-WiFiClient client;
+//Stepper *stepper = NULL;
+//ClientSocket *socket;
 
 void setup()
 {
 	Serial.begin(9600);
 
-	Serial.printf("Connecting to %s\n", ssid);
-  WiFi.mode(WIFI_STA);
-	WiFi.config(staticIP,gateway,subnet);
-	//WiFi.setAutoReconnect(true);
-	WiFi.begin(ssid,password);
-	while(WiFi.status()!=WL_CONNECTED)
-	{
-		delay(500);
-		Serial.print(".");
-	}
-	Serial.println();
-	Serial.print("Connected, IP address: ");
-	Serial.println(WiFi.localIP());
+	//*socket = newClientSocket();
+	//socket->ConnectWiFi();
+
+	// *stepper = Stepper(D0, D1, D2, D3, 3);
 }
 
 void loop()
 {
-	if(!client.connected())
-	{
-		connectServer();
-	}
+	// String signal = socket->ReadContent('\n');
+	// if (signal == "")
+	// {
+	// 	return;
+	// }
 
-  if(client.available())
-  {
-  	String line = client.readStringUntil('\n');
-    Serial.print(line);
-  }
+	// if (signal == "open")
+	// {
+	// 	openDoor();
+	// }
 }
 
-void connectServer()
+// ClientSocket newClientSocket()
+// {
+// 	SocketConfig config;
+// 	config.SSID = "WA";
+// 	config.Password = "wivia1868";
+// 	config.StaticIP = IPAddress(192, 168, 3, 200);
+// 	config.Dns = IPAddress(255, 255, 255, 0);
+// 	config.Gateway = IPAddress(192, 168, 3, 1);
+// 	config.Server = IPAddress(192, 168, 3, 93);
+// 	return ClientSocket(config);
+// }
+
+void openDoor()
 {
-	while(!client.connected())
-	{
-		client.connect(server,port);
-		Serial.printf("Try connect server(%s:%d)...\n",server,port);
-		delay(500);
-	}
+	Serial.println("Door Opening...");
+	// stepper->Forward(1100);
+	// stepper->Back(1100);
+	// stepper->Reset();
+	Serial.println("Door Opened!");
 }
