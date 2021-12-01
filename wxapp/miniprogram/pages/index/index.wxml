@@ -1,0 +1,12 @@
+<!--index.wxml-->
+<view class="container">
+
+  <view class="title">BinHome</view>
+
+  <view class="top_tip">智能家居</view>
+
+  <view>
+    <button type="primary" bindtap="onClickOpenDoor">开门</button>
+  </view>
+
+</view>
