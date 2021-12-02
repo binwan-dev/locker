@@ -1,3 +1,4 @@
+using BinHome.Server.Handlers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BinHome.Server.Controllers;
@@ -5,9 +6,17 @@ namespace BinHome.Server.Controllers;
 [Route("/locker")]
 public class LockerController : ControllerBase
 {
-    [HttpPost("opendoor")]
-    public Task<IActionResult> OpenDoor()
-    {
+    private readonly LockerHandler _lockerHandler;
 
+    public LockerController(LockerHandler lockerHandler)
+    {
+        _lockerHandler = lockerHandler;
+    }
+
+    [HttpPost("opendoor")]
+    public IActionResult OpenDoor()
+    {
+        _lockerHandler.OpenDoor();
+        return Ok(new { Msg = "open success!" });
     }
 }

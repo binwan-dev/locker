@@ -1,13 +1,21 @@
+using BinHome.Server.Infrastructure;
 using BinHome.Server.Infrastructure.Socketing;
 
 namespace BinHome.Server.Handlers
 {
     public class LockerHandler
     {
-        public string ss()
+        private readonly TcpEventHandler _tcpEventHandler;
+
+        public LockerHandler(ITcpEventHandler tcpEventHandler)
         {
-            var options = new SocketOptions();
-            var server = new ServerSocket();
+            _tcpEventHandler = (TcpEventHandler)tcpEventHandler;
+        }
+
+        public void OpenDoor()
+        {
+            var command = "opendoor\n";
+            _tcpEventHandler.SendMessage(System.Text.Encoding.UTF8.GetBytes(command));
         }
     }
 }
