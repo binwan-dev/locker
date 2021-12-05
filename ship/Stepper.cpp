@@ -13,38 +13,40 @@ Stepper::Stepper(size_t l1, size_t l2, size_t l3, size_t l4, int delayMillSecond
     this->_l3 = l3;
     this->_l4 = l4;
     this->_delayMillSecond = delayMillSecond;
+
+    Reset();
 }
 
 void Stepper::Reset()
 {
-    digitalWrite(this->_l1, 0);
-    digitalWrite(this->_l2, 0);
-    digitalWrite(this->_l3, 0);
-    digitalWrite(this->_l4, 0);
+    digitalWrite(this->_l1, LOW);
+    digitalWrite(this->_l2, LOW);
+    digitalWrite(this->_l3, LOW);
+    digitalWrite(this->_l4, LOW);
 }
 
 void Stepper::Forward(int setpNum)
 {
     for (int i = 0; i < setpNum; i++)
     {
-        digitalWrite(this->_l1, 1);
-        digitalWrite(this->_l2, 1);
         Reset();
+        digitalWrite(this->_l1, HIGH);
+        digitalWrite(this->_l2, HIGH);
         delay(this->_delayMillSecond);
 
-        digitalWrite(this->_l2, 1);
-        digitalWrite(this->_l3, 1);
         Reset();
+        digitalWrite(this->_l2, HIGH);
+        digitalWrite(this->_l3, HIGH);
         delay(this->_delayMillSecond);
 
-        digitalWrite(this->_l3, 1);
-        digitalWrite(this->_l4, 1);
         Reset();
+        digitalWrite(this->_l3, HIGH);
+        digitalWrite(this->_l4, HIGH);
         delay(this->_delayMillSecond);
 
-        digitalWrite(this->_l4, 1);
-        digitalWrite(this->_l1, 1);
         Reset();
+        digitalWrite(this->_l4, HIGH);
+        digitalWrite(this->_l1, HIGH);
         delay(this->_delayMillSecond);
     }
 }
@@ -53,24 +55,24 @@ void Stepper::Back(int setpNum)
 {
     for (int i = 0; i < setpNum; i++)
     {
-        digitalWrite(this->_l1, 1);
-        digitalWrite(this->_l4, 1);
         Reset();
+        digitalWrite(this->_l1, HIGH);
+        digitalWrite(this->_l4, HIGH);
         delay(this->_delayMillSecond);
 
-        digitalWrite(this->_l4, 1);
-        digitalWrite(this->_l3, 1);
         Reset();
+        digitalWrite(this->_l4, HIGH);
+        digitalWrite(this->_l3, HIGH);
         delay(this->_delayMillSecond);
 
-        digitalWrite(this->_l3, 1);
-        digitalWrite(this->_l2, 1);
         Reset();
+        digitalWrite(this->_l3, HIGH);
+        digitalWrite(this->_l2, HIGH);
         delay(this->_delayMillSecond);
 
-        digitalWrite(this->_l2, 1);
-        digitalWrite(this->_l1, 1);
         Reset();
+        digitalWrite(this->_l2, HIGH);
+        digitalWrite(this->_l1, HIGH);
         delay(this->_delayMillSecond);
     }
 }

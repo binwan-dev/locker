@@ -20,7 +20,9 @@ class ClientSocket
 private:
     SocketConfig _config;
     WiFiClient _client;
+    int _loopCount;
     void connectServer();
+    void sendHeartBeat();
 
 public:
     ClientSocket(SocketConfig config);
