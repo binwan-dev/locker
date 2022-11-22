@@ -9,6 +9,9 @@ create-tag:
 
 docker-publish: create-tag
 	- docker build -t ${RegistryServer}/${RegistryRepo}:${TAG} .
+	- rm -rf releaselog
+
+docker-push: docker-publish
 	- docker login ${RegistryServer} -u ${RegistryUser} -p ${RegistryPassword}
 	- docker push ${RegistryServer}/${RegistryRepo}:${TAG}
 	- rm -rf releaselog
