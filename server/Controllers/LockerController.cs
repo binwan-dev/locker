@@ -1,4 +1,4 @@
-using BinHome.Server.Handlers;
+using BinHome.Server.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BinHome.Server.Controllers;
@@ -6,17 +6,17 @@ namespace BinHome.Server.Controllers;
 [Route("/locker")]
 public class LockerController : ControllerBase
 {
-    private readonly LockerHandler _lockerHandler;
+    private readonly IOTManager _iotManager;
 
-    public LockerController(LockerHandler lockerHandler)
+    public LockerController(IOTManager iotManager)
     {
-        _lockerHandler = lockerHandler;
+        _iotManager = iotManager;
     }
 
-    [HttpPost("opendoor")]
-    public IActionResult OpenDoor()
+    [HttpPost("opendoor/{mac}")]
+    public IActionResult OpenDoor(string mac)
     {
-        _lockerHandler.OpenDoor();
-        return Ok(new { Msg = "open success!" });
+        _iotManager.OpenDoor(mac);
+        return Ok(new { Msg = "success!" });
     }
 }

@@ -29,10 +29,14 @@ namespace BinHome.Server.Infrastructure.Socketing
             _sendArgs.Completed += OnSendCompleted;
             _receiveArgs = new SocketAsyncEventArgs();
             _receiveArgs.Completed += OnReceiveCompleted;
-            _sendArgs.SetBuffer(new byte[_options.ReceiveBufferSize]);
+            _sendArgs.SetBuffer(new byte[_options.SendBufferSize]);
 
             tryReceive();
         }
+
+        public string ID { get; } = Guid.NewGuid().ToString();
+
+        public bool Connected => _socket == null ? false : _socket.Connected;
 
         public void QueueMessage(byte[] msg)
         {
@@ -103,6 +107,8 @@ namespace BinHome.Server.Infrastructure.Socketing
                 if (Interlocked.CompareExchange(ref _receiving, 1, 0) != 0)
                     return;
 
+                var buffer = new byte[_options.ReceiveBufferSize];
+                _receiveArgs.SetBuffer(buffer, 0, buffer.Length);
                 if (!_socket.ReceiveAsync(_receiveArgs))
                     OnReceiveCompleted(_socket, _receiveArgs);
             }
@@ -136,6 +142,8 @@ namespace BinHome.Server.Infrastructure.Socketing
             }
             finally
             {
+                args.SetBuffer(null);
+                Interlocked.Exchange(ref _receiving, 0);
                 tryReceive();
             }
         }

@@ -2,7 +2,6 @@
 #define _ClientSocket_H__
 
 #include <Arduino.h>
-// #include <WiFi.h>
 #include <ESP8266WiFi.h>
 
 struct SocketConfig
@@ -23,13 +22,15 @@ private:
     WiFiClient _client;
     int _loopCount;
     bool _recvHeartbeat;
-    void connectServer();
     void sendHeartBeat();
 
 public:
+    bool ServerConnected();
     ClientSocket(SocketConfig config);
     void ConnectWiFi();
+    void ConnectServer();
     String ReadContent(char split);
+    void RegisterDevice();
 };
 
 #endif

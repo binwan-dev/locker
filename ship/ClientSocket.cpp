@@ -1,3 +1,4 @@
+// #include <WiFi.h>
 #include <ESP8266WiFi.h>
 #include "ClientSocket.h"
 
@@ -38,26 +39,51 @@ void ClientSocket::connectServer()
         digitalWrite(LED_BUILTIN, 0);
     }
     digitalWrite(LED_BUILTIN, 1);
+    Serial.printf("server connected! address: %s\n", _client.localIP().toString());
 }
+
+// String ClientSocket::ReadContent(char split)
+// {
+//     if (!_client.connected())
+//     {
+//         this->connectServer();
+//     }
+
+//     if (_client.available() < 1)
+//     {
+//         delay(500);
+//         _loopCount++;
+//         if (_loopCount == 120)
+//         {
+//             if (_recvHeartbeat)
+//             {
+//                 digitalWrite(LED_BUILTIN, 0);
+//                 _client.println("ping");
+//                 _recvHeartbeat = false;
+//             }
+//             else
+//             {
+//                 delay(1000);
+//                 digitalWrite(LED_BUILTIN, 1);
+//             }
+//             // Serial.println("Send heart beat...");
+//             _loopCount = 0;
+//         }
+//         return "";
+//     }
+
+//     return this->_client.readStringUntil(split);
+// }
 
 String ClientSocket::ReadContent(char split)
 {
-    Serial.println("read");
-    if (!_client.connected())
-    {
-        this->connectServer();
-    }
+    return readString(split);
+}
 
+String ClientSocket::readString(char split)
+{
     if (_client.available() < 1)
     {
-        delay(500);
-        _loopCount++;
-        if (_loopCount == 20)
-        {
-            _client.println("ping");
-            Serial.println("Send heart beat...");
-            _loopCount = 0;
-        }
         return "";
     }
 

@@ -1,4 +1,3 @@
-using BinHome.Server.Handlers;
 using BinHome.Server.Infrastructure;
 using BinHome.Server.Infrastructure.Socketing;
 
@@ -12,9 +11,10 @@ namespace BinHome.Server
 
             builder.Services.AddLogging();
             builder.Services.AddOptions().Configure<SocketOptions>((o) => builder.Configuration.GetSection("SocketOptions").Bind(o));
-            builder.Services.AddSingleton<ITcpEventHandler, TcpEventHandler>();
+            var iotManager = new IOTManager();
+            builder.Services.AddSingleton<IOTManager>(iotManager);
+            builder.Services.AddSingleton<ITcpEventHandler>(iotManager);
             builder.Services.AddSingleton<ServerSocket>();
-            builder.Services.AddSingleton<LockerHandler>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

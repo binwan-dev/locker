@@ -1,7 +1,9 @@
 #include "Stepper.h"
+#include "BServo.h"
 #include "ClientSocket.h"
 
 Stepper *stepper = NULL;
+BServo *bservo = NULL;
 ClientSocket *socket = NULL;
 
 void setup()
@@ -12,30 +14,41 @@ void setup()
 	socket = newClientSocket();
 	socket->ConnectWiFi();
 
-	stepper = new Stepper(D5, D6, D7, D8, 3);
+	// stepper = new Stepper(D5, D6, D7, D8, 3);
+	bservo = new BServo(2);
 }
+
+// void loop()
+// {
+// String signal = socket->ReadContent('\n');
+// if (signal == "")
+// {
+// 	return;
+// }
+
+// if (signal == "opendoor")
+// {
+// 	digitalWrite(LED_BUILTIN, 0);
+// 	openDoor();
+// 	digitalWrite(LED_BUILTIN, 1);
+// }
+// }
 
 void loop()
 {
-	String signal = socket->ReadContent('\n');
-	if (signal == "")
+	String content = socket->ReadContent('\n');
+	if (content == "")
 	{
+		delay(500);
 		return;
-	}
-
-	if (signal == "opendoor")
-	{
-		digitalWrite(LED_BUILTIN, 0);
-		openDoor();
-		digitalWrite(LED_BUILTIN, 1);
 	}
 }
 
 ClientSocket *newClientSocket()
 {
 	SocketConfig config;
-	config.SSID = "WA";
-	config.Password = "wivia1868";
+	config.SSID = "Bin";
+	config.Password = "wanbin1994";
 	config.StaticIP = IPAddress(192, 168, 3, 200);
 	config.Dns = IPAddress(255, 255, 255, 0);
 	config.Gateway = IPAddress(192, 168, 3, 1);
@@ -47,8 +60,9 @@ ClientSocket *newClientSocket()
 void openDoor()
 {
 	Serial.println("Door Opening...");
-	stepper->Forward(1100);
-	stepper->Back(1100);
-	stepper->Reset();
+	bservo->Forward(4);
+	bservo->Reset();
+	bservo->Back(4);
+	bservo->Reset();
 	Serial.println("Door Opened!");
 }
