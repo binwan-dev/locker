@@ -3,9 +3,10 @@
 #include "ClientSocket.h"
 #include "Model.h"
 
-ClientSocket::ClientSocket(SocketConfig config)
+ClientSocket::ClientSocket(SocketConfig config, IOTInfo iotInfo)
 {
     this->_config = config;
+    this->_iotInfo = iotInfo;
 }
 
 void ClientSocket::ConnectWiFi()
@@ -51,12 +52,20 @@ void ClientSocket::ConnectServer()
 void ClientSocket::RegisterDevice()
 {
     String empty = "";
-    String message = empty + "{\"Command\":" + IOTCommand_Register + ", \"Type\": " + IOTType_Light + ",\"MacAddress\":\"" + String(WiFi.macAddress()) + "\"}";
-    Serial.printf("send register data");
+    String message = empty + "{\"Command\":" + IOTCommand_Register + ", \"Type\": " + _iotInfo.IOTType + ",\"MacAddress\":\"" + String(WiFi.macAddress()) + "\"}";
+    Serial.printf("send register data\n");
     _client.println(message);
 }
 
-String ClientSocket::ReadContent(char split)
+void ClientSocket::sendHeartbeat()
+{
+    String empty = "";
+    String message = empty + "{\"Command\":" + IOTCommand_Heartbeat + ", \"Type\": " + _iotInfo.IOTType + ",\"MacAddress\":\"" + String(WiFi.macAddress()) + "\"}";   
+    Serial.printf("send heartbeat\n");
+    _client.println(message);
+}
+
+IOTServerCommand *ClientSocket::ReadCommand(char split)
 {
     if (_client.available() < 1)
     {
@@ -67,7 +76,7 @@ String ClientSocket::ReadContent(char split)
             if (_recvHeartbeat)
             {
                 digitalWrite(LED_BUILTIN, LOW);
-                _client.println("ping");
+                sendHeartbeat();
                 _recvHeartbeat = false;
             }
             else
@@ -78,8 +87,37 @@ String ClientSocket::ReadContent(char split)
             // Serial.println("Send heart beat...");
             _loopCount = 0;
         }
-        return "";
+        return nullptr;
     }
 
-    return this->_client.readStringUntil(split);
+    String payload = this->_client.readStringUntil(split);
+    if(payload=="")
+    {
+        return nullptr;
+    }
+
+    IOTServerCommand command = parse(payload);
+    if(command.Command==IOTCommand_Heartbeat)
+    {
+        Serial.printf(command.Body);
+        return nullptr;
+    }
+
+    return command;
+}
+
+IOTServerCommand parse(String payloadStr)
+{
+  Serial.println(payloadStr);
+  IOTServerCommand command;
+  DynamicJsonDocument doc(512);
+  DeserializationError error = deserializeJson(doc, payloadStr);
+  if(error)
+  {
+    return command;
+  }
+  
+  command.Command=doc["Command"];
+  //command.MacAddress=doc["MacAddress"];
+  return command;
 }

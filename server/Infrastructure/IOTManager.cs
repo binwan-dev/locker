@@ -42,14 +42,16 @@ public class IOTManager : ITcpEventHandler
     public void HandleReceived(TcpConnection connection, ArraySegment<byte> data)
     {
         var iotMessage = parse(data);
-	if(iotMessage==null)
+	    if(iotMessage==null)
             return;
         iotMessage.Connection = connection;
 
         switch (iotMessage.Command)
         {
-	    case IOTCommand.Regist:
+            case IOTCommand.Regist:
                 HandleRegister(iotMessage);
+                break;
+            case IOTCommand.Heartbeat:
                 break;
         }   
     }
@@ -93,6 +95,17 @@ public class IOTManager : ITcpEventHandler
             _iotDevices[message.MacAddress] = message;
 	else
             _iotDevices.Add(message.MacAddress, message);
+    }
+
+    private void HandleHeartbeat(IOTMessage message)
+    {
+        var reply = new IOTReply()
+        {
+            Command = message.Command,
+            MacAddress = message.MacAddress,
+            Body = "pong"
+        };
+        message.Connection.QueueMessage(Encoding.UTF8.GetBytes($"{JsonSerializer.Serialize(reply)}\n"));
     }
     
     private IOTMessage? parse(ArraySegment<byte> data)

@@ -46,7 +46,7 @@ void loop()
   }
   if (socket->ServerConnected() && !Registed)
   {
-    socket->RegisterDevice();
+    socket->RegisterDevice(IOTType_Light);
     Registed = true;
   }
 

@@ -2,7 +2,6 @@
 #define _ClientSocket_H__
 
 #include <Arduino.h>
-// #include <WiFi.h>
 #include <ESP8266WiFi.h>
 
 struct SocketConfig
@@ -16,20 +15,28 @@ struct SocketConfig
     int Port;
 };
 
+struct IOTInfo
+{
+    int IOTType;
+}
+
 class ClientSocket
 {
 private:
     SocketConfig _config;
+    IOTInfo _iotInfo;
     WiFiClient _client;
     int _loopCount;
     bool _recvHeartbeat;
-    void connectServer();
-    void sendHeartBeat();
+    void sendHeartbeat();
 
 public:
-    ClientSocket(SocketConfig config);
+    bool ServerConnected();
+    ClientSocket(SocketConfig config, IOTInfo iotInfo);
     void ConnectWiFi();
-    String ReadContent(char split);
+    void ConnectServer();
+    IOTServerCommand *ReadCommand(char split);
+    void RegisterDevice();
 };
 
 #endif
