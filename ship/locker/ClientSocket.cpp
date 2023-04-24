@@ -1,7 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <Arduino.h>
 #include "ClientSocket.h"
-#include "Model.h"
+#include <ArduinoJson.h>
 
 ClientSocket::ClientSocket(SocketConfig config, IOTInfo iotInfo)
 {
@@ -65,7 +65,7 @@ void ClientSocket::sendHeartbeat()
     _client.println(message);
 }
 
-IOTServerCommand *ClientSocket::ReadCommand(char split)
+bool ClientSocket::ReadCommand(char split, IOTServerCommand *command)
 {
     if (_client.available() < 1)
     {
@@ -87,26 +87,26 @@ IOTServerCommand *ClientSocket::ReadCommand(char split)
             // Serial.println("Send heart beat...");
             _loopCount = 0;
         }
-        return nullptr;
+        return false;
     }
 
     String payload = this->_client.readStringUntil(split);
     if(payload=="")
     {
-        return nullptr;
+        return false;
     }
 
-    IOTServerCommand command = parse(payload);
-    if(command.Command==IOTCommand_Heartbeat)
+    *command = parse(payload);
+    if(command->Command==IOTCommand_Heartbeat)
     {
-        Serial.printf(command.Body);
-        return nullptr;
+        Serial.println(command->Body);
+        return false;
     }
 
-    return command;
+    return true;
 }
 
-IOTServerCommand parse(String payloadStr)
+IOTServerCommand ClientSocket::parse(String payloadStr)
 {
   Serial.println(payloadStr);
   IOTServerCommand command;
@@ -118,6 +118,7 @@ IOTServerCommand parse(String payloadStr)
   }
   
   command.Command=doc["Command"];
-  //command.MacAddress=doc["MacAddress"];
+  command.MacAddress=doc["MacAddress"];
+  command.Body=doc["Body"];
   return command;
 }

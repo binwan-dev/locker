@@ -1,3 +1,5 @@
+#ifndef _BServo_H__
+#define _BServo_H__
 //#include <ESP32Servo.h>
 #include <Servo.h>
 
@@ -13,3 +15,5 @@ public:
     void Back(int trunsNum);
     void Reset();
 };
+
+#endif

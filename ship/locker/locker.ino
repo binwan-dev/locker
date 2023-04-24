@@ -1,7 +1,6 @@
 #include "ClientSocket.h";
 #include "Model.h";
 #include "BServo.h";
-#include <ArduinoJson.h>
 
 BServo *bservo = NULL;
 ClientSocket *socket = NULL;
@@ -51,12 +50,12 @@ void loop()
   }
   if (socket->ServerConnected() && !Registed)
   {
-    socket->RegisterDevice(IOTType_Door);
+    socket->RegisterDevice();
     Registed = true;
   }
 
-  IOTCommand *command = socket->ReadCommand('\n');
-  if(command==nullptr)
+  IOTServerCommand command;
+  if(!socket->ReadCommand('\n', &command))
   {
     return;
   }

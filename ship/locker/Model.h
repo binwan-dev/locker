@@ -1,5 +1,7 @@
 #include <Arduino.h>
 
+#ifndef MODEL_H
+#define MODEL_H
 struct DeviceInfo
 {
     char *MacAddress;
@@ -24,6 +26,7 @@ static const int IOTType_Door = 1;
 struct IOTServerCommand
 {
     int Command;
-    char* MacAddress;
-    char* Body;
+    const char* MacAddress;
+    const char* Body;
 };
+#endif
