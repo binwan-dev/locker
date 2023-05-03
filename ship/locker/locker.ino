@@ -1,6 +1,4 @@
-#include "ClientSocket.h";
-#include "Model.h";
-#include "BServo.h";
+#include <BinHomeLib.h>
 
 BServo *bservo = NULL;
 ClientSocket *socket = NULL;
@@ -30,9 +28,6 @@ ClientSocket *newClientSocket()
   SocketConfig config;
   config.SSID = "Bin";
   config.Password = "wanbin1994";
-  config.StaticIP = IPAddress(192, 168, 3, 200);
-  config.Dns = IPAddress(255, 255, 255, 0);
-  config.Gateway = IPAddress(192, 168, 3, 1);
   config.Server = IPAddress(192, 168, 3, 252);
   config.Port = 5663;
   IOTInfo iotInfo;

@@ -9,9 +9,6 @@ struct SocketConfig
 {
     char *SSID;
     char *Password;
-    IPAddress StaticIP;
-    IPAddress Dns;
-    IPAddress Gateway;
     IPAddress Server;
     int Port;
 };

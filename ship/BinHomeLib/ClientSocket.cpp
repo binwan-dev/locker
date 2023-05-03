@@ -14,7 +14,6 @@ void ClientSocket::ConnectWiFi()
     digitalWrite(LED_BUILTIN, HIGH);
     Serial.printf("Connecting to %s\n", this->_config.SSID);
     WiFi.mode(WIFI_STA);
-    WiFi.config(this->_config.StaticIP, this->_config.Gateway, this->_config.Dns);
     WiFi.setAutoReconnect(true);
     WiFi.begin(this->_config.SSID, this->_config.Password);
     while (WiFi.status() != WL_CONNECTED)
