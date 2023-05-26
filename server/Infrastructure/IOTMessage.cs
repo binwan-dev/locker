@@ -26,15 +26,20 @@ public class IOTReply
 
 public enum IOTCommand
 {
-    Regist=1,
-    Heartbeat=999,
-    OpenDoor=2,
-    LightOn=3,
-    LightOff=4,
+    Regist = 1,
+    Heartbeat = 999,
+    OpenDoor = 2,
+    LightOn = 3,
+    LightOff = 4,
+    ACOpen = 5,
+    ACSetTemperature = 6,
+    ACClose = 7
 }
 
 public enum IOTType
 {
-    Door=1,
-    Light=2
+    Door = 1,
+    Light = 2,
+    AC = 3,
+    AC_Light = 4,
 }

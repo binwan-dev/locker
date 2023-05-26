@@ -1,6 +1,7 @@
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
+using BinHome.Server.Infrastructure.IOTDtos;
 using BinHome.Server.Infrastructure.Socketing;
 
 namespace BinHome.Server.Infrastructure;
@@ -57,17 +58,29 @@ public class IOTManager : ITcpEventHandler
     }
 
     public void OpenDoor(string deviceMac, string content = "")
-	=> sendSimpleCommandToDevice(deviceMac, content, IOTCommand.OpenDoor, IOTType.Door);
+	=> sendSimpleCommandToDevice(deviceMac, content, IOTCommand.OpenDoor);
 
     public void LightOn(string deviceMac, string content = "")
-	=> sendSimpleCommandToDevice(deviceMac, content, IOTCommand.LightOn, IOTType.Light);
+	=> sendSimpleCommandToDevice(deviceMac, content, IOTCommand.LightOn);
     
     public void LightOff(string deviceMac, string content = "")
-	=> sendSimpleCommandToDevice(deviceMac, content, IOTCommand.LightOff, IOTType.Light);
+	=> sendSimpleCommandToDevice(deviceMac, content, IOTCommand.LightOff);
 
-    private void sendSimpleCommandToDevice(string deviceMac,string content,IOTCommand command,IOTType iotType)
+    public void AcOpen(string deviceMac, string content = "")
+	=> sendSimpleCommandToDevice(deviceMac, content, IOTCommand.LightOn);
+
+    public void AcSetTemperature(string deviceMac, int temperature = 26)
     {
-	var device = checkAndGetDevice(deviceMac, command, iotType);
+	var dto = new SetAcTemperatureDto(temperature);
+        sendSimpleCommandToDevice(deviceMac, JsonSerializer.Serialize(dto), IOTCommand.ACSetTemperature);
+    }
+
+    public void AcClose(string deviceMac, string content = "")
+	=> sendSimpleCommandToDevice(deviceMac, content, IOTCommand.ACClose);
+
+    private void sendSimpleCommandToDevice(string deviceMac,string content,IOTCommand command)
+    {
+        var device = checkAndGetDevice(deviceMac, command);
         var reply = new IOTReply()
         {
             Command = command,
@@ -77,12 +90,10 @@ public class IOTManager : ITcpEventHandler
         device.Connection.QueueMessage(Encoding.UTF8.GetBytes($"{JsonSerializer.Serialize(reply)}\n"));
     }
 
-    private IOTMessage checkAndGetDevice(string deviceMac, IOTCommand command, IOTType iotType)
+    private IOTMessage checkAndGetDevice(string deviceMac, IOTCommand command)
     {
 	if(!_iotDevices.TryGetValue(deviceMac,out IOTMessage? device)||device==null)
             throw new InvalidOperationException("Cannot found device!");
-	if(device.Type!=iotType)
-            throw new InvalidOperationException("Device type error!");
 	if(device.Connection==null||!device.Connection.Connected)
             throw new InvalidOperationException("Tcp connection not connected!");
         return device;

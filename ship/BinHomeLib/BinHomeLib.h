@@ -4,5 +4,6 @@
 #include "BServo.h"
 #include "ClientSocket.h"
 #include "Model.h"
+#include "IRsendMeidi.h"
 
 #endif
