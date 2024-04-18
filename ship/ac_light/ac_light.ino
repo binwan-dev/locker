@@ -1,15 +1,19 @@
 #include <BinHomeLib.h>
 #include <ArduinoJson.h>
+#include <IRremoteESP8266.h>
+#include <MideaIR.h>
+#include <IRsend.h>
+
+#define GPIO_AC       14
 
 static const uint8_t GPIO_LIGHT = 5;
 #define GPIO_LIGHT GPIO_LIGHT
 
-static const uint8_t GPIO_AC = 4;
-#define GPIO_AC GPIO_AC
-
 bool Registed = false;
 ClientSocket *socket = NULL;
-IRsendMeidi *irsendmeidi = NULL;
+
+IRsend irsend(GPIO_AC);
+MideaIR remote_control(&irsend);
 
 void setup()
 {
@@ -23,11 +27,6 @@ void setup()
 
   socket = newClientSocket();  
   socket->ConnectWiFi();
-
-  irsendmeidi = new IRsendMeidi(GPIO_AC);
-  irsendmeidi->begin_2();   //初始化
-  irsendmeidi->setZBPL(40); //设置红外载波频率，单位kHz,不调用此函数则默认38，由于未知原因，我设置为40，示波器测得频率为38左右，当发送信号后没反应时，尝试更改此值。
-  irsendmeidi->setCodeTime(500,1600,550,4400,4400,5220); //设置信号的高低电平占比，分别为标记位，1位，0位，前导码低电平，前导码高电平，间隔码高电平
 }
 
 ClientSocket *newClientSocket()
@@ -99,20 +98,25 @@ void lightOff()
 void acOpen()
 {
   Serial.println("ac open");
-  irsendmeidi->setPowers(1);
+  remote_control.turnON();
+  delay(2000);
+  remote_control.seTurboMode();
 }
 
 void acSetTemperature(String bodyStr)
 {
   IOTAcSetTemperatureDto dto = parse(bodyStr);
   Serial.println("ac set temperature to " + dto.Temperature);
-  irsendmeidi->setTemps(dto.Temperature);
+  remote_control.setTemperature(dto.Temperature);
+  remote_control.emit();
+  delay(1000);
+  remote_control.setMode(mode_cool);
 }
 
 void acClose()
 {
   Serial.println("ac close");
-  irsendmeidi->setPowers(0);
+  remote_control.turnOFF();
 }
 
 IOTAcSetTemperatureDto parse(String contentStr)

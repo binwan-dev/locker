@@ -40,9 +40,9 @@ void ClientSocket::ConnectServer()
     {
         _client.connect(this->_config.Server, this->_config.Port);
         Serial.printf("Try connect server(%s:%d)...\n", this->_config.Server.toString(), this->_config.Port);
-        digitalWrite(LED_BUILTIN, HIGH);
-        delay(1000);
         digitalWrite(LED_BUILTIN, LOW);
+        delay(1000);
+        digitalWrite(LED_BUILTIN, HIGH);
     }
     digitalWrite(LED_BUILTIN, HIGH);
     Serial.printf("server connected! address: %s\n", _client.localIP().toString());
@@ -75,13 +75,10 @@ bool ClientSocket::ReadCommand(char split, IOTServerCommand *command)
             if (_recvHeartbeat)
             {
                 digitalWrite(LED_BUILTIN, LOW);
+                delay(800);
+                digitalWrite(LED_BUILTIN, HIGH);
                 sendHeartbeat();
                 _recvHeartbeat = false;
-            }
-            else
-            {
-                delay(1000);
-                digitalWrite(LED_BUILTIN, HIGH);
             }
             // Serial.println("Send heart beat...");
             _loopCount = 0;
